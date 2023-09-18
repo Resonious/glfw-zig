@@ -1161,8 +1161,25 @@ static void handleEvents(double* timeout)
         if (fds[0].revents & POLLIN)
         {
             wl_display_read_events(_glfw.wl.display);
-            if (wl_display_dispatch_pending(_glfw.wl.display) > 0)
+            int dispatched = wl_display_dispatch_pending(_glfw.wl.display);
+            if (dispatched > 0)
                 event = GLFW_TRUE;
+
+            // If we dispatched exactly 1 event, and glfwSwapBuffers was recently 
+            // called, that event is almost certainly a delete_id that does not
+            // warrant waking up.
+            if (dispatched == 1) {
+                _GLFWwindow* window = _glfw.windowListHead;
+                while (window)
+                {
+                    if (window->swappedBuffers) {
+                        window->swappedBuffers = GLFW_FALSE;
+                        event = GLFW_FALSE;
+                    }
+
+                    window = window->next;
+                }
+            }
         }
         else
             wl_display_cancel_read(_glfw.wl.display);

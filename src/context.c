@@ -676,6 +676,7 @@ GLFWAPI void glfwSwapInterval(int interval)
         return;
     }
 
+    window->swappedBuffers = GLFW_TRUE;
     window->context.swapInterval(interval);
 }
 

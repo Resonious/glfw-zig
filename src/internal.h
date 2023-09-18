@@ -589,6 +589,9 @@ struct _GLFWwindow
     double              virtualCursorPosX, virtualCursorPosY;
     GLFWbool            rawMouseMotion;
 
+    // Hack specifically for Wayland where swapping buffers causes an event
+    GLFWbool            swappedBuffers;
+
     _GLFWcontext        context;
 
     _GLFWpreedit        preedit;
